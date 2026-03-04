@@ -15,7 +15,9 @@ export function IKStatusPanel() {
 
   const err = ikResult?.finalError ?? 0;
   const errColor = err < 0.001 ? 'text-green-400' : err < 0.005 ? 'text-yellow-400' : 'text-red-400';
-  const canApply = ghostJointStates != null && ikResult?.success === true;
+  const ACCEPT_ERROR_THRESHOLD = 0.03;
+  const isCloseEnough = ikResult != null && ikResult.finalError <= ACCEPT_ERROR_THRESHOLD;
+  const canApply = ghostJointStates != null && (ikResult?.success === true || isCloseEnough);
 
   const ancestorCount = ikAncestorIndices.length;
   const totalCount = actuatedJointNames.length;
@@ -65,8 +67,10 @@ export function IKStatusPanel() {
             <span className="text-[#888]">—</span>
           ) : ikResult.success ? (
             <span className="text-green-400">Converged ✓</span>
+          ) : isCloseEnough ? (
+            <span className="text-yellow-400">Close — apply if desired</span>
           ) : (
-            <span className="text-red-400">Failed ✗</span>
+            <span className="text-red-400">Failed (target may be unreachable)</span>
           )}
         </div>
 
@@ -75,7 +79,7 @@ export function IKStatusPanel() {
             <div>
               <span className="text-[#888]">Iterations: </span>
               <span className="text-[#e0e0e0]">
-                {ikResult.iterations} / 100
+                {ikResult.iterations} / 150
               </span>
             </div>
             <div>

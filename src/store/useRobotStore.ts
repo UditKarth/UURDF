@@ -95,8 +95,8 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
       eeLink: state.endEffectorLink,
       positionOnly: true,
       lambda: 0.5,
-      tolerance: 1e-4,
-      maxIterations: 100,
+      tolerance: 1e-3,
+      maxIterations: 150,
       jointLimitPadding: 0.01,
       singularityThreshold: 1e-2,
     });
